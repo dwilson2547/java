@@ -1,0 +1,23 @@
+to add a repository: 
+
+git clone (url)
+
+to update repositories: 
+
+git pull
+
+to upload changes: 
+
+git add files
+
+git commit -m "message"
+
+git push
+
+to check status: 
+
+git status
+
+to get out of commit prompt, hit escape then type :wq
+
+
