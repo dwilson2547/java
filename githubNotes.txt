@@ -20,4 +20,4 @@ git status
 
 to get out of commit prompt, hit escape then type :wq
 
-
+only pull in repository home or else you'll donwload a bunch of crap to a location you don't want it at 
