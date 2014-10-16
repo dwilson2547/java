@@ -1,0 +1,327 @@
+/**
+ * CS 180 - Project 03 - RiverCrossingPuzzle
+ * 
+ * (Brief description of the class file)
+ * 
+ * @author DANIEL WILSON <Wilso509@purdue.edu>
+ * 
+ * @lab LN5
+ *
+ * @date October 14, 2014
+ */
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class RiverCrossingPuzzle {
+    
+    int numEach; 
+    int boatSize; 
+    int missionariesLeftBank; 
+    int missionariesRightBank; 
+    int cannibalsLeftBank; 
+    int cannibalsRightBank; 
+    boolean boatOnLeft = true;   
+    int moves = 0; 
+    ArrayList<Integer> missionariesToMove = new ArrayList<Integer>(); 
+    ArrayList<Integer> cannibalsToMove = new ArrayList<Integer>(); 
+    
+    public RiverCrossingPuzzle(int numEach, int boatSize) {
+        this.numEach = numEach; 
+        this.boatSize = boatSize; 
+    }
+    
+    public int numMissionariesOnLeftBank() {
+        // return number of missionaries on left bank
+        return missionariesLeftBank; 
+    }
+    public int numMissionariesOnRightBank() {
+        // return number of missionaries on right bank
+        return missionariesRightBank; 
+    }
+    public int numCannibalsOnLeftBank() {
+        // return number of cannibals on left bank
+        return cannibalsLeftBank; 
+    }
+    public int numCannibalsOnRightBank() {
+        // return number of cannibals on right bank; 
+        return cannibalsRightBank; 
+    }
+    public boolean boatOnLeftBank() {
+        // returns true if boat is on left (starting) bank
+        return boatOnLeft;
+    }
+    public boolean boatOnRightBank() {
+        // returns true if boat is on right (starting) bank
+        boolean boat = false; 
+        if (boatOnLeft == true) 
+            boat = false; 
+        else if (boatOnLeft == false) 
+            boat = true; 
+        return boat; 
+    }
+    public String availableActions() {
+        // returns a string containing all available actions for current puzzle state
+        // each action should be on its own line preceeded by an integer in parentheses
+        String actions = ""; 
+        cannibalsToMove.clear();
+        missionariesToMove.clear();
+        int actionNum = 1; 
+        if (boatOnLeft == true) {
+            for (int i = 0; i <= cannibalsLeftBank; i++) {
+                for (int j = 0; j <= missionariesLeftBank; j++) {
+                    if ((i + j) <= boatSize && (i + j) != 0) {
+                        actions = actions + "(" + actionNum + ") " + i + " Cannibals, " + j + " Missionaries \n";
+                        cannibalsToMove.add(i);
+                        missionariesToMove.add(j);
+                        actionNum++; 
+                    }
+                }
+            }
+        }
+        else if (boatOnRightBank() == true) {
+            for (int i = 0; i <= cannibalsRightBank; i ++) {
+                for (int j = 0; j <= missionariesRightBank; j++) {
+                    if ((i + j) <= boatSize && (i + j) != 0) {
+                        actions = actions + "(" + actionNum + ") " + i + " Cannibals, " + j + " Missionaries \n";
+                        cannibalsToMove.add(i); 
+                        missionariesToMove.add(j); 
+                        actionNum++; 
+                    }
+                }
+            }
+        }
+        return actions;
+    }
+    public void move(int numCannibalsToMove, int numMissionariesToMove) {
+        // check if a move is allowed and move people to the other side
+        // numcannibalstomove: number of cannibals to move to the other side
+        // nummissionariestomove: number of missionaries to move to the other side
+        // validate input 
+        if (numCannibalsToMove <= 0 && numMissionariesToMove <= 0) {
+            return; 
+        }
+        
+        if (boatOnLeftBank() == true) {
+            if (numMissionariesToMove > missionariesLeftBank) {
+                return; 
+            }
+            if (numCannibalsToMove > cannibalsLeftBank) {
+                return; 
+            }
+            else {
+                missionariesLeftBank = missionariesLeftBank - numMissionariesToMove; 
+                cannibalsLeftBank = cannibalsLeftBank - numCannibalsToMove; 
+                missionariesRightBank = missionariesRightBank + numMissionariesToMove; 
+                cannibalsRightBank = cannibalsRightBank + numCannibalsToMove; 
+                
+                // change side boat is on
+                boatOnLeft = false; 
+            }
+        }
+        else if (boatOnRightBank() == true) {
+            if (numMissionariesToMove > missionariesRightBank) {
+                return; 
+            }
+            if (numCannibalsToMove > cannibalsRightBank) {
+                return;
+            }
+            else {
+                missionariesLeftBank = missionariesLeftBank + numMissionariesToMove; 
+                cannibalsLeftBank = cannibalsLeftBank + numCannibalsToMove; 
+                missionariesRightBank = missionariesRightBank - numMissionariesToMove; 
+                cannibalsRightBank = cannibalsRightBank - numCannibalsToMove;
+                
+                // change side boat is ohe move() method only needs to check whether the 
+                //inputted values are within the limits and that the move is possible
+                boatOnLeft = true; 
+            }
+        }
+        moves++; 
+    }
+    public int totalMoves() {
+        // returns the total number of crossings so far
+        return moves; 
+    }
+    public void reset() {
+        // resets game to original state
+        missionariesLeftBank = this.numEach; 
+        cannibalsLeftBank = this.numEach; 
+        missionariesRightBank = 0; 
+        cannibalsRightBank = 0; 
+        boatOnLeft = true; 
+         
+        moves = 0; 
+    }
+    public int status() {
+        // returns status of game
+        // reutrns -1 if puzle failed, 0 if not yet solved, and 1 if solved
+        if (missionariesLeftBank == 0 && cannibalsLeftBank == 0) {
+            return 1;
+        }
+        if (cannibalsLeftBank > missionariesLeftBank && missionariesLeftBank > 0) {
+            return -1; 
+        }
+        if (cannibalsRightBank > missionariesRightBank && missionariesRightBank > 0) {
+            return -1; 
+        }
+        else {
+            return 0; 
+        } 
+    }
+    public void play() {
+        // facilitate a user interacting with the puzzle 
+        cannibalsLeftBank = numEach; 
+        missionariesLeftBank = numEach; 
+        Scanner s = new Scanner(System.in);
+        while (status() == 0) {
+            System.out.println(puzzleState());
+            System.out.println(prompt()); 
+            int num1 = 0; 
+            int num2 = 0; 
+            String inputLine = ""; 
+            num1 = s.nextInt(); 
+            num2 = s.nextInt();
+            // num1 is the number of cannibals to be moved, num2 is the number of missionaries to be moved
+            
+            // call move method to move canibals and missionaries
+            move(num1, num2); 
+            // set boat to correct side
+                // done in move method
+            // if number of cannibals on one side is greater than the number of missionaries, status = -1
+        }
+        if (status() == -1) {
+            System.out.println("You Lose"); 
+            System.out.println("Would you like to try again? Y/N"); 
+            String response = s.next();
+            if ("Y".equals(response.trim()) || "y".equals(response.trim())) {
+                reset();
+                play(); 
+            }
+        }
+        if (status() == 1) {
+            System.out.println("Congradulations, You won!");
+        }
+    }
+    
+    public static void main(String[] args) {
+        int numEach = 0; 
+        int boatSize = 0; 
+        if (args.length == 0) 
+            return; 
+        //-num
+        else if (args[0].equals("-n") && args[2].equals("-b")) {
+            if (Integer.parseInt(args[1]) > 0) {
+                numEach = Integer.parseInt(args[1]);
+            }
+            if (Integer.parseInt(args[3]) <= 4 && Integer.parseInt(args[3]) > 0) {
+                boatSize = Integer.parseInt(args[3]);
+            }
+            else {
+                System.out.println("Invalid Input"); 
+                return; 
+            }
+        }
+        //-boat
+        else if (args[0].equals("-b") && args[2].equals("-n")) {
+            if (Integer.parseInt(args[3]) <= 4 && Integer.parseInt(args[3]) > 0) {
+                boatSize = Integer.parseInt(args[1]);
+            }
+            if (Integer.parseInt(args[1]) > 0) {
+                numEach = Integer.parseInt(args[3]); 
+            }
+            else {
+                System.out.println("Invalid Input");
+                return; 
+            }
+        } 
+        RiverCrossingPuzzle a = new RiverCrossingPuzzle(numEach, boatSize); 
+        a.play(); 
+    }
+    
+   /**
+     *  ***DO NOT CHANGE THIS FUNCTION.***
+     * @return String containing the prompt for user input
+     */
+    public String prompt() {
+        String str = "";
+        str += "Available Actions\n";
+        str += availableActions();
+        str += "Action: ";
+        return str;
+    }
+ 
+    /**
+     * ***DO NOT CHANGE THIS FUNCTION.***
+     * @return state of left (starting) bank as a String
+     */
+    private String leftBank() {
+        String str = "";
+        for (int i = 0; i < numCannibalsOnLeftBank(); i++)
+            str += "C";
+        str += " ";
+        for (int i = 0; i < numMissionariesOnLeftBank(); i++)
+            str += "M";
+        str += " ";
+        if (boatOnLeftBank())
+            str += "B";
+        return str;
+    }
+ 
+    /**
+     *  ***DO NOT CHANGE THIS FUNCTION.***
+     * @return state of right (ending) bank as a String
+     */
+    private String rightBank() {
+        String str = "";
+        if (boatOnRightBank())
+            str += "B ";
+        for (int i = 0; i < numCannibalsOnRightBank(); i++)
+            str += "C";
+        str += " ";
+        for (int i = 0; i < numMissionariesOnRightBank(); i++)
+            str += "M";
+        return str;
+    }
+ 
+    public String toString() {
+        return leftBank() + " | " + rightBank();
+    }
+ 
+    /**
+     *  ***DO NOT CHANGE THIS FUNCTION.***
+     * @return String representation of current state of puzzle
+     */
+    private String puzzleState() {
+        String lb = leftBank();
+        String rb = rightBank();
+        String str = "\n";
+        str += "Left Bank";
+        for (int i = 9; i < lb.length(); i++)
+            str += " ";
+        str += " | ";
+        for (int i = lb.length() + 3; i < lb.length() + rb.length() + 3 - 10; i++)
+            str += " ";
+        str += "Right Bank";
+        str += "\n";
+        str += lb;
+        for (int i = lb.length(); i < 9; i++)
+            str += " ";
+        str += " | ";
+        for (int i = rb.length() - 10; i < 0; i++)
+            str += " ";
+        str += rb;
+        str += "\n";
+        str += "\n";
+        str += "   Cannibals on left,right banks: ";
+        str += String.format("%3d,%3d", numCannibalsOnLeftBank(), numCannibalsOnRightBank());
+        str += "\n";
+        str += "Missionaries on left,right banks: ";
+        str += String.format("%3d,%3d", numMissionariesOnLeftBank(), numMissionariesOnRightBank());
+        str += "\n";
+        str += "\n";
+        str += "Number of moves: " + totalMoves();
+        str += "\n";
+        return str;
+    }
+}
