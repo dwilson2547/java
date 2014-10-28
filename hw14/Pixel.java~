@@ -1,6 +1,0 @@
-public class Pixel {
-    int pixel; 
-    pixel(int pixel) {
-        this.pixel = pixel; 
-    }
-}
