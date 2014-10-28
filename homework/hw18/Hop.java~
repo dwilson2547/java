@@ -1,0 +1,11 @@
+public class Hop {
+    
+}
+
+class Skip extends Hop {
+    
+}
+
+class Jump extends Skip {
+    
+}
