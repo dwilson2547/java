@@ -4,6 +4,7 @@
  * program solves sudoku puzzles
  * 
  * @author Daniel Wilson <wilso509@purdue.edu>
+ * @author Matt Stahl <stahl9@purdue.edu>
  * 
  * @lab LN5
  * 
