@@ -4,7 +4,6 @@
  * program solves sudoku puzzles
  * 
  * @author Daniel Wilson <wilso509@purdue.edu>
- * @author Matt Stahl <stahl9@purdue.edu>
  * 
  * @lab LN5
  * 
@@ -83,89 +82,55 @@ public class Sudoku {
         // already set (non zero), in which case there are no candidates
         boolean[] values = new boolean[9]; 
         for (int i = 0; i < 9; i++) {
-            values[i] = false; 
+            values[i] = true; 
         }
         // search rows
         for (int i = 0; i < 9; i++) {
-            int index = board[i][column + 1];
-            if (index != 0 && pv.contains(index) == false) {
-                values[i] = true; 
+            int index = board[i][column];
+            if (index != 0) {
+                values[board[i][column] - 1] = false; 
             }
         } 
         // search columns
         for (int i = 0; i < 9; i++) {
-            int index = board[row + 1][i]; 
-            if (index != 0 && pv.contains(index) == false) {
-                values[i] = true; 
+            int index = board[row][i]; 
+            if (index != 0) {
+                values[board[row][i] - 1] = false; 
             }
         }
         // search box
-        if (row > 0 && row < 4) {
-            if (column > 0 && column < 4) {
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 3; j++) {
-                        int index = board[i][j]; 
-                        if (index != 0 && pv.contains(index) == false) {
-                            values[index - 1] = true; 
-                        }
-                    }
+        
+        int r = (row - (row % 3)); 
+        int c = (column - (column % 3)); 
+
+        for (int i = r; i < (r + 3); i++) {
+            for (int j = c; j < (c + 3); j++) {
+		if (board[j][i] != 0) {
+                    values[board[j][i] - 1] = false; 
                 }
-            }
-            else if (column > 3 && column < 7) {
-                // FIX NUMBERS 
-                for (int i = 3; i < 6; i++) {
-                    for (int j = 3; j < 3; j++) {
-                        int index = board[i][j]; 
-                        if (index != 0 && pv.contains(index) == false) {
-                            values[index - 1] = true; 
-                        }
-                    }
-                }
-            }
-            else {
-                // FIX NUMBERS 
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 3; j++) {
-                        int index = board[i][j]; 
-                        if (index != 0 && pv.contains(index) == false) {
-                            values[index - 1] = true; 
-                        }
-                    }
-                }
-            }
-        }
-        else if (row > 3 && row < 7) {
-            if (column > 0 && column < 4) {
-                
-            }
-            else if (column > 3 && column < 7) {
-                
-            }
-            else {
-                
-            }
-        }
-        else {
-            if (column > 0 && column < 4) {
-                
-            }
-            else if (column > 3 && column < 7) {
-                
-            }
-            else {
-                
             }
         }
         return  values; 
     }
     public boolean isSolved() {
         // returns true if the board is in a solved state 
-        return false; 
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == 0)
+                    return false;
+            }
+        }
+        return true; 
     }
     //To construct a board from this string (which might be provided as a command line argument to main, or via standard input) is simply a 
     public void solve() {
         // attempts to solve the board. exits when board is solved or 
         // no updates were made to the board
+        while ((!isSolved()) && (nakedSingles() || hiddenSingles())) {
+            // loop continues to search for hidden and naked singles 
+            // stops execution when puzzle is solved or there are no
+            // more hidden singles or naked singles
+        }
     }
     public boolean nakedSingles() {
         return false; 
@@ -174,7 +139,13 @@ public class Sudoku {
         return false; 
     }
     public void initializeArray(String s) {
-        
+        int index = 0; 
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                board[i][j] = s.charAt(index); 
+                index++; 
+            }
+        }
     }
     // main method
     public static void main(String[] args) {
@@ -182,10 +153,18 @@ public class Sudoku {
         Sudoku a = new Sudoku(); 
         
         if (args.length != 0) {
-            if (args.length == 2) {
-                if (args[2].length() == 81) {
-                    a.initializeArray(args[2].toString()); 
+            if (args.length == 1) {
+                if (args[0].length() == 81) {
+                    a.initializeArray(args[0]); 
                 }
+                else {
+                    System.out.println("Please enter a 81 digits"); 
+                    return; 
+                }
+            }
+            else {
+                System.out.println("Invalid Input"); 
+                return;
             }
         }
         else {
@@ -197,17 +176,11 @@ public class Sudoku {
                 return; 
             }
             try {
-                int index = 0; 
-                
-                for (int i = 0; i < 9; i++) {
-                    for (int j = 0; j < 9; j++) {
-                        a.board[i][j] = inputLine.charAt(index); 
-                        index++; 
-                    }
-                }
+                a.initializeArray(inputLine);
             }
             catch (Exception ex) {
                 System.out.println(ex.toString()); 
+                return; 
             }
         }
         // call methods here 
@@ -216,3 +189,4 @@ public class Sudoku {
         
     }
 }
+
