@@ -13,26 +13,37 @@
 
 // imports
 import java.util.Scanner; 
-import java.util.ArrayList; 
+ 
 // Sudoku class 
 public class Sudoku {
     
     public int[][] board; 
-    ArrayList<Integer> pv = new ArrayList<Integer>() ; 
         
     public Sudoku() {
         // creates a Sudoku with an initially empty board
-        board = new int[9][9];
-        for (int i = 1; i < 10; i++) {
-            pv.add(i); 
-        }
+        this.board = new int[][]{{0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+            {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+            {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+            {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+            {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+            {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+            {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+            {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+            {0, 0, 0, 0, 0, 0, 0, 0, 0}
+        };
     }
     public Sudoku(int[][] array) {
         // creates a Sudoku with an initial board defined by the 
         //two dimensional array board, where board[r][c] represents 
         //the value stored in the cell at the intersection 
         //of row r and column c. value 0 represents an empty cell
-        board = array; 
+        int[][] copy = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                copy[i][j] = array[i][j];
+            }
+        }
+        this.board = copy;
     }
     // print board method
     public void printBoard(int[][] array) {
@@ -46,11 +57,11 @@ public class Sudoku {
             System.out.print(row_Letter + " |");
             for (int j = 0; j < 9; j++) {
                 char cell_Symbol; 
-                if (array[i][j] == '0') {
+                if (array[i][j] == 0) {
                     cell_Symbol = ' '; 
                 }
                 else {
-                    cell_Symbol = (char)array[i][j];  
+                    cell_Symbol = (char)(array[i][j] + 48);  
                 }
                 if (j > 0 && j % 3 == 0 && j != 8) {
                     System.out.print(" | " + cell_Symbol);
@@ -72,8 +83,13 @@ public class Sudoku {
     
     public int[][] board() {
         // returns a copy of the current state of the board
-        int[][] boardCopy = board; 
-        return boardCopy; 
+        int[][] boardCopy = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                boardCopy[i][j] = board[i][j];
+            }
+        }
+        return boardCopy;
     }
     public boolean[] candidates(int row, int column) {
         // returns the list of candidates for the specified cell
@@ -105,7 +121,7 @@ public class Sudoku {
 
         for (int i = r; i < (r + 3); i++) {
             for (int j = c; j < (c + 3); j++) {
-		if (board[j][i] != 0) {
+                if (board[j][i] != 0) {
                     values[board[j][i] - 1] = false; 
                 }
             }
@@ -116,13 +132,12 @@ public class Sudoku {
         // returns true if the board is in a solved state 
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                if (board[i][j] == 0)
+                if (board[i][j] == '0');
                     return false;
             }
         }
         return true; 
-    }
-    //To construct a board from this string (which might be provided as a command line argument to main, or via standard input) is simply a 
+    } 
     public void solve() {
         // attempts to solve the board. exits when board is solved or 
         // no updates were made to the board
@@ -131,18 +146,151 @@ public class Sudoku {
             // stops execution when puzzle is solved or there are no
             // more hidden singles or naked singles
         }
+        printBoard(board); 
     }
     public boolean nakedSingles() {
+        boolean[] values = new boolean[9]; 
+        int ctr = 0; 
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                values = candidates(r, c); 
+                ctr = 0; 
+                for (int i = 0; i < 9; i++) {
+                    if (values[i] = true) {
+                        ctr++; 
+                    }
+                }
+                if (ctr ==1) {
+                    for (int j = 0; j < 9; j++) {
+                        if (values[j] == true) {
+                            board[r][c] = (j + 1); 
+                            return true; 
+                        }
+                    }
+                }
+            }
+        }
         return false; 
     }
     public boolean hiddenSingles() {
+        return (hSRows() || hSColumns() || hSBlock());  
+    }
+    public boolean hSRows() {
+        boolean[][] values = new boolean[9][9];
+        boolean[] r = new boolean[9]; 
+        boolean[] num = new boolean[9]; 
+        
+        for (int i = 0; i < 9; i++) {
+            r[i] = false; 
+        }
+        
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                num = candidates(i, j); 
+                for (int k = 0; k < 9; k++) {
+                    values[j][k] = num[k]; 
+                }
+            }
+            for (int j = 0; i < 9; i++) {
+                int ctr = 0; 
+                for (int k = 0; k < 9; k++) {
+                    if (values[k][j] == true) {
+                        ctr++; 
+                        r[k] = true; 
+                    }
+                }
+                if (ctr == 1) {
+                    for (int k = 0; k < 9; k++) {
+                        if (values[k][j] == true) {
+                            board[i][k] = j + 1;  
+                            return true; 
+                        }
+                    }
+                }
+            }
+        }
         return false; 
+    }
+    public boolean hSColumns() {
+        boolean[][] values = new boolean[9][9];
+        boolean[] c = {false, false, false, false, false, false, false, false, false}; 
+        //represents which cells are filled. False if cell is not a possible [1].
+        boolean[] num = new boolean[9];
+        
+        for (int coll = 0; coll < 9; coll++) {            
+            for (int row = 0; row < 9; row++) {
+                num = candidates(row, coll);        
+                for (int a = 0; a < 9; a++) {
+                    values[row][a] = num[a];
+                }
+            }
+            for (int i = 0; i < 9; i++) {
+                int counter = 0;
+                for (int j = 0; j < 9; j++) {
+                    if (values[j][i]) {
+                        counter++; //increments each time the cell is a possible candidate
+                        c[j] = true;
+                    }
+                }
+                if (counter == 1) {
+                    for (int k = 0; k < 9; k++) {
+                        if (values[k][i]) {
+                            board[k][coll] = i + 1;
+                            return true;
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+        return false; 
+    }
+    public boolean hSBlock() {
+        boolean[][] values = new boolean[9][9];
+        boolean[] block = {false, false, false, false, false, false, false, false, false}; 
+        //represents which cells are filled. False if cell is not a possible [1].
+        boolean[] num = new boolean[9];
+        
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                int ctr = 0;
+                for (int f = 0; f < 3; f++) {
+                    for (int g = 0; g < 3; g++) {
+                        num = candidates(3 * i + f, 3 * j + g);
+                        
+                        for (int h = 0; h < 9; h++) {
+                            values[ctr][h]  = num[h];
+                        }
+                        ctr++;
+                    }
+                }
+                for (int k = 0; k < 9; k++) {
+                    int ctr2 = 0;
+                    for (int b = 0; b < 9; b++) {
+                        if (values[b][k]) {
+                            ctr2++; //increments each time the cell is a possible candidate
+                            block[b] = true;
+                        }
+                    }
+                    if (ctr2 == 1) {
+                        for (int c = 0; c < 9; c++) {
+                            if (values[c][k]) {
+                                board[3 * i + c / 3][3 * j + c % 3] = k + 1;
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }            
+        return false;
     }
     public void initializeArray(String s) {
         int index = 0; 
         for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                board[i][j] = s.charAt(index); 
+            for (int j = 0; j < 9; j++) { 
+                board[i][j] = s.charAt(index) - 48; 
                 index++; 
             }
         }
@@ -185,8 +333,7 @@ public class Sudoku {
         }
         // call methods here 
         
-        a.printBoard(a.board); 
+        a.solve(); 
         
     }
 }
-

@@ -157,6 +157,14 @@ public class Sudoku {
                 if (args[0].length() == 81) {
                     a.initializeArray(args[0]); 
                 }
+                else {
+                    System.out.println("Please enter a 81 digits"); 
+                    return; 
+                }
+            }
+            else {
+                System.out.println("Invalid Input"); 
+                return;
             }
         }
         else {
@@ -168,19 +176,11 @@ public class Sudoku {
                 return; 
             }
             try {
-                
                 a.initializeArray(inputLine);
-//                int index = 0; 
-//                
-//                for (int i = 0; i < 9; i++) {
-//                    for (int j = 0; j < 9; j++) {
-//                        a.board[i][j] = inputLine.charAt(index); 
-//                        index++; 
-//                    }
-//                }
             }
             catch (Exception ex) {
                 System.out.println(ex.toString()); 
+                return; 
             }
         }
         // call methods here 
