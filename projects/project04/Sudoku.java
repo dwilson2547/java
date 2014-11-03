@@ -97,36 +97,41 @@ public class Sudoku {
         // the cell at row and column, so long as the cell is not 
         // already set (non zero), in which case there are no candidates
         boolean[] values = new boolean[9]; 
-        for (int i = 0; i < 9; i++) {
+        for (int i = 0; i < 9; i++ ) {
             values[i] = true; 
         }
-        // search rows
-        for (int i = 0; i < 9; i++) {
-            int index = board[i][column];
-            if (index != 0) {
-                values[board[i][column] - 1] = false; 
-            }
-        } 
-        // search columns
-        for (int i = 0; i < 9; i++) {
-            int index = board[row][i]; 
-            if (index != 0) {
-                values[board[row][i] - 1] = false; 
-            }
-        }
-        // search box
-        
-        int r = (row - (row % 3)); 
-        int c = (column - (column % 3)); 
-
-        for (int i = r; i < (r + 3); i++) {
-            for (int j = c; j < (c + 3); j++) {
-                if (board[j][i] != 0) {
-                    values[board[j][i] - 1] = false; 
+        if (board[row][column] == 0) {
+            // check columns
+            for (int i = 0; i < 9; i++) {
+                if (board[row][i] != 0) {
+                    values[board[row][i] - 1] = false; 
                 }
             }
+            // check rows
+            for (int i = 0; i < 9; i++) {
+                if (board[i][column] != 0) {
+                    values[board[i][column] -1] = false; 
+                }
+            }
+            // check box 
+            
+            for (int i = 0; i < 3; i++) {
+                for (int j = 0; j < 3; j++) {
+                    int r = 3 * (row / 3); 
+                    int c = 3 * (column / 3);
+                    if (board[j+r][i + c] != 0) {
+                        values[board[j + r][i + c] - 1] = false; 
+                    }
+                }
+            }             
         }
-        return  values; 
+        // otherwise 
+        else {
+            for (int i = 0; i < 9; i++) {
+                values[i] = false; 
+            }
+        }
+        return values; 
     }
     public boolean isSolved() {
         // returns true if the board is in a solved state 
@@ -156,11 +161,11 @@ public class Sudoku {
                 values = candidates(r, c); 
                 ctr = 0; 
                 for (int i = 0; i < 9; i++) {
-                    if (values[i] = true) {
+                    if (values[i] == true) {
                         ctr++; 
                     }
                 }
-                if (ctr ==1) {
+                if (ctr == 1) {
                     for (int j = 0; j < 9; j++) {
                         if (values[j] == true) {
                             board[r][c] = (j + 1); 
@@ -177,115 +182,130 @@ public class Sudoku {
     }
     public boolean hSRows() {
         boolean[][] values = new boolean[9][9];
-        boolean[] r = new boolean[9]; 
-        boolean[] num = new boolean[9]; 
+        boolean[] candidates = new boolean[9];
+        boolean[] row = new boolean[9];
         
         for (int i = 0; i < 9; i++) {
-            r[i] = false; 
+            row[i] = false; 
         }
         
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                num = candidates(i, j); 
-                for (int k = 0; k < 9; k++) {
-                    values[j][k] = num[k]; 
+        for (int rowIndex = 0; rowIndex < 9; rowIndex++) {
+            for (int columnIndex = 0; columnIndex < 9; columnIndex++) {
+                // assign candidate value to candidates array
+                candidates = candidates(rowIndex, columnIndex); 
+                for (int i = 0; i < 9; i++) {
+                    values[columnIndex][i] = candidates[i]; 
                 }
             }
-            for (int j = 0; i < 9; i++) {
+            for (int i = 0; i < 9; i ++) {
                 int ctr = 0; 
-                for (int k = 0; k < 9; k++) {
-                    if (values[k][j] == true) {
+                for (int j = 0; j < 9; j++) {
+                    if (values[j][i]) {
                         ctr++; 
-                        r[k] = true; 
+                        row[j] = false; 
                     }
                 }
+                // check if row has only one possible value
                 if (ctr == 1) {
                     for (int k = 0; k < 9; k++) {
-                        if (values[k][j] == true) {
-                            board[i][k] = j + 1;  
+                        if (values[k][i]) {
+                            board[rowIndex][k] = i + 1;
                             return true; 
                         }
                     }
                 }
             }
         }
-        return false; 
+    return false; 
     }
     public boolean hSColumns() {
         boolean[][] values = new boolean[9][9];
-        boolean[] c = {false, false, false, false, false, false, false, false, false}; 
-        //represents which cells are filled. False if cell is not a possible [1].
-        boolean[] num = new boolean[9];
+        boolean[] candidates = new boolean[9];
+        boolean[] column = new boolean[9];
         
-        for (int coll = 0; coll < 9; coll++) {            
-            for (int row = 0; row < 9; row++) {
-                num = candidates(row, coll);        
-                for (int a = 0; a < 9; a++) {
-                    values[row][a] = num[a];
+        for (int i = 0; i < 9; i++) {
+            column[i] = false; 
+        }
+        
+        for (int columnIndex = 0; columnIndex < 9; columnIndex++) {
+            for (int rowIndex = 0; rowIndex < 9; rowIndex++) {
+                // assign candidate value to candidates array
+                candidates = candidates(columnIndex, rowIndex); 
+                for (int i = 0; i < 9; i++) {
+                    values[rowIndex][i] = candidates[i]; 
                 }
             }
-            for (int i = 0; i < 9; i++) {
-                int counter = 0;
+            for (int i = 0; i < 9; i ++) {
+                int ctr = 0; 
                 for (int j = 0; j < 9; j++) {
                     if (values[j][i]) {
-                        counter++; //increments each time the cell is a possible candidate
-                        c[j] = true;
+                        ctr++; 
+                        column[j] = false; 
                     }
                 }
-                if (counter == 1) {
+                // check if row has only one possible value
+                if (ctr == 1) {
                     for (int k = 0; k < 9; k++) {
                         if (values[k][i]) {
-                            board[k][coll] = i + 1;
-                            return true;
+                            board[k][columnIndex] = i + 1;
+                            return true; 
                         }
                     }
                 }
             }
-            
         }
-        
-        return false; 
+    return false; 
     }
     public boolean hSBlock() {
         boolean[][] values = new boolean[9][9];
-        boolean[] block = {false, false, false, false, false, false, false, false, false}; 
-        //represents which cells are filled. False if cell is not a possible [1].
-        boolean[] num = new boolean[9];
+        boolean[] candidates = new boolean[9]; 
+        boolean[] box = new boolean[9]; 
+        // initialize all values for box to false
+        for (int i = 0; i < 9; i++) {
+            box[i] = false; 
+        }
         
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                int ctr = 0;
-                for (int f = 0; f < 3; f++) {
-                    for (int g = 0; g < 3; g++) {
-                        num = candidates(3 * i + f, 3 * j + g);
-                        
-                        for (int h = 0; h < 9; h++) {
-                            values[ctr][h]  = num[h];
+                int ctr = 0; 
+                for (int k = 0; k < 3; k++) {
+                    for (int l = 0; l < 3; l++) {
+                        int r = (3 * i + k); 
+                        int c = (3 * j + l); 
+                        candidates = candidates(r, c);
+                        for (int m = 0; m < 9; m++) {
+                            values[ctr][m] = candidates[m]; 
                         }
-                        ctr++;
+                        ctr++; 
                     }
                 }
                 for (int k = 0; k < 9; k++) {
-                    int ctr2 = 0;
-                    for (int b = 0; b < 9; b++) {
-                        if (values[b][k]) {
-                            ctr2++; //increments each time the cell is a possible candidate
-                            block[b] = true;
+                    int ctr2 = 0; 
+                    for (int l = 0; l < 9; l++) {
+                        if (values[l][k]) {
+                            ctr2++; 
+                            box[l] = true; 
                         }
                     }
+                    // check if box has one possible value; 
                     if (ctr2 == 1) {
-                        for (int c = 0; c < 9; c++) {
-                            if (values[c][k]) {
-                                board[3 * i + c / 3][3 * j + c % 3] = k + 1;
-                                return true;
+                        for (int l = 0; l < 9; l++) {
+                            if (values[l][k]) {
+                                int r = 3 * i + l / 3; 
+                                int c = 3 * j + l % 3; 
+                                board[r][c] = k + 1; 
+                                return true; 
                             }
                         }
                     }
                 }
             }
-        }            
-        return false;
+        }
+        return false; 
     }
+ 
+
+
     public void initializeArray(String s) {
         int index = 0; 
         for (int i = 0; i < 9; i++) {
