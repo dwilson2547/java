@@ -21,7 +21,7 @@ public class Sudoku {
         
     public Sudoku() {
         // creates a Sudoku with an initially empty board
-        this.board = new int[][]{{0, 0, 0, 0, 0, 0, 0, 0, 0}, 
+        this.board = new int[][] {{0, 0, 0, 0, 0, 0, 0, 0, 0}, 
             {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
             {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
             {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
@@ -29,8 +29,7 @@ public class Sudoku {
             {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
             {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
             {0, 0, 0, 0, 0, 0, 0, 0, 0}, 
-            {0, 0, 0, 0, 0, 0, 0, 0, 0}
-        };
+            {0, 0, 0, 0, 0, 0, 0, 0, 0}};
     }
     public Sudoku(int[][] array) {
         // creates a Sudoku with an initial board defined by the 
@@ -137,7 +136,7 @@ public class Sudoku {
         // returns true if the board is in a solved state 
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                if (board[i][j] == '0');
+                if (this.board[i][j] == '0');
                     return false;
             }
         }
@@ -316,44 +315,43 @@ public class Sudoku {
         }
     }
     // main method
-    public static void main(String[] args) {
-        // get input from user 
-        Sudoku a = new Sudoku(); 
-        
-        if (args.length != 0) {
-            if (args.length == 1) {
-                if (args[0].length() == 81) {
-                    a.initializeArray(args[0]); 
-                }
-                else {
-                    System.out.println("Please enter a 81 digits"); 
-                    return; 
-                }
-            }
-            else {
-                System.out.println("Invalid Input"); 
-                return;
-            }
-        }
-        else {
-            Scanner s = new Scanner(System.in); 
-            System.out.println("Please enter a Sudoku puzzle as an 81 digit string of numbers: "); 
-            String inputLine = s.next(); 
-            if (inputLine.length() != 81) {
-                System.out.println("Please enter 81 digits"); 
-                return; 
-            }
-            try {
-                a.initializeArray(inputLine);
-            }
-            catch (Exception ex) {
-                System.out.println(ex.toString()); 
-                return; 
-            }
-        }
-        // call methods here 
-        
-        a.solve(); 
-        
-    }
+//    public static void main(String[] args) {
+//        // get input from user 
+//        Sudoku a = new Sudoku(); 
+//        
+//        if (args.length != 0) {
+//            if (args.length == 1) {
+//                if (args[0].length() == 81) {
+//                    a.initializeArray(args[0]); 
+//                }
+//                else {
+//                    System.out.println("Please enter a 81 digits"); 
+//                    return; 
+//                }
+//            }
+//            else {
+//                System.out.println("Invalid Input"); 
+//                return;
+//            }
+//        }
+//        else {
+//            Scanner s = new Scanner(System.in); 
+//            System.out.println("Please enter a Sudoku puzzle as an 81 digit string of numbers: "); 
+//            String inputLine = s.next(); 
+//            if (inputLine.length() != 81) {
+//                System.out.println("Please enter 81 digits"); 
+//                return; 
+//            }
+//            try {
+//                a.initializeArray(inputLine);
+//            }
+//            catch (Exception ex) {
+//                System.out.println(ex.toString()); 
+//                return; 
+//            }
+//        }
+//        // call methods here 
+//        
+//        a.solve(); 
+//    }
 }
